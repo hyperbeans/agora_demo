@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "340441280748",
+    "project_id": "agoramessage-75cc5",
+    "storage_bucket": "agoramessage-75cc5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:340441280748:android:a0229afa5ba2939a2af5c9",
+        "android_client_info": {
+          "package_name": "com.vikashhyperbeans.testagoracall"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAULITVg4agX8_5tGVJb7xbqSuvK4hbWwQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

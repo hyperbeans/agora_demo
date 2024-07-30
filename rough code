@@ -1,0 +1,1170 @@
+// version use
+// ========================
+
+
+//     "agora-react-native-rtm": "^1.5.1",
+//     "agora-rn-uikit": "^5.0.1",
+//     "expo": "~50.0.14",
+//     "expo-dev-client": "~3.3.11",
+//     "react": "18.2.0",
+//     "react-native": "0.73.6",
+//     "react-native-agora": "^4.1.2",
+
+
+
+//  link use 
+//  ========================
+
+
+//  1. https://github1s.com/AgoraIO-Extensions/react-native-agora/blob/f2859c99255b7adabe06591ee345b6cfd7f06057/src/AgoraRtcRenderView.tsx
+
+//  2.https://api-ref.agora.io/en/video-sdk/react-native/4.x/API/enum_rendermodetype.html
+
+//  3.https://github.com/AgoraIO-Community/VideoUIKit-ReactNative/blob/master/src/Contexts/PropsContext.tsx
+
+//  4.https://github.com/AgoraIO-Community/VideoUIKit-ReactNative/blob/master/src/Contexts/PropsContext.tsx#L104
+
+//  5. https://www.youtube.com/watch?v=kd0YGr1iHjs    "video for video call "
+
+//  6. https://api-ref.agora.io/en/video-sdk/react-native/4.x/API/class_rtcsurfaceview.html
+
+//  7. https://github.com/AgoraIO-Community/VideoUIKit-ReactNative/wiki/Examples#full-example
+
+
+
+// =================================================================================================================
+
+// import React, { useState } from 'react';
+// import { View, StyleSheet } from 'react-native';
+// import AgoraUIKit, { RtcEngine } from 'agora-rn-uikit';
+
+// const App = () => {
+//   const [users, setUsers] = useState([]);
+
+//   const props = {
+//     connectionData: {
+//       appId: 'a233f454a3f64ce19d6b480aaa018a93',
+//       channel: 'agoratest',
+//       layout:0
+//     },
+//     rtcCallbacks: {
+//       UserJoined: (user) => setUsers((prevUsers) => [...prevUsers, user]),
+//       UserOffline: (user) =>
+//         setUsers((prevUsers) => prevUsers.filter((u) => u.uid !== user.uid)),
+//     },
+//   };
+
+//   const layout = {
+//     activeLayout: 'custom',
+//     layouts: [
+//       {
+//         type: 'custom',
+//         config: {
+//           style: {
+//             width: '100%',
+//             height: '100%',
+//           },
+//           renderItem: ({ user, style }) => {
+//             const isSingleUser = users.length === 1;
+//             return (
+//               <View
+//                 key={user.uid}
+//                 style={[
+//                   style,
+//                   styles.videoContainer,
+//                   isSingleUser ? styles.singleUser : styles.multiUser,
+//                 ]}
+//               >
+//                 <RtcEngine.RtcRemoteView.SurfaceView
+//                   uid={user.uid}
+//                   style={styles.video}
+//                 />
+//               </View>
+//             );
+//           },
+//         },
+//       },
+//     ],
+//   };
+
+//   return (
+//     <View style={styles.container}>
+//       <AgoraUIKit
+//         connectionData={props.connectionData}
+//         rtcCallbacks={props.rtcCallbacks}
+//         layoutProps={layout}
+//       />
+//     </View>
+//   );
+// };
+
+// const styles = StyleSheet.create({
+//   container: {
+//     flex: 1,
+//   },
+//   videoContainer: {
+//     justifyContent: 'center',
+//     alignItems: 'center',
+//   },
+//   singleUser: {
+//     width: '100%',
+//     height: '100%',
+//   },
+//   multiUser: {
+//     flex: 1,
+//     aspectRatio: 1, // Ensure a square aspect ratio
+//     margin: 1, // Add a margin to create a grid effect
+//   },
+//   video: {
+//     width: '100%',
+//     height: '100%',
+//   },
+// });
+
+// export default App;
+
+
+
+
+
+
+
+
+
+
+
+
+// ==================================================================================================
+
+// import React, { useEffect, useState } from "react";
+// import AgoraUIKit, { ClientRoleType }  from "agora-rn-uikit";
+// // RenderModeType, VideoRenderMode , {RenderModeType }
+// // import {RenderModeType} from 'react-native-agora';
+// import { Text, PermissionsAndroid, Alert, SafeAreaView, View ,StyleSheet,Dimensions} from "react-native";
+
+// const { width, height } = Dimensions.get('window');
+
+// // const getOrientation = () => {
+// //   const { height, width } = Dimensions.get('window');
+// //   return width > height ? 'landscape' : 'portrait';
+// // };
+
+
+// const Videocall = ({navigation}) => {
+//   const [videoCall, setVideoCall] = useState(false);
+//   const [buttonsState, setButtonState] = useState("flex");
+//   const [remoteUsers, setRemoteUsers] = useState([]);
+//   const [userCount, setUserCount] = useState(1);
+//   const [isHost, setIsHost] = useState(true);
+//   // const [orientation, setOrientation] = useState(getOrientation());
+//   // const [numParticipants, setNumParticipants] = useState(userCount); // Example number of participants
+
+//   // useEffect(() => {
+//   //   const updateOrientation = () => {
+//   //     setOrientation(getOrientation());
+//   //   };
+
+//   //   Dimensions.addEventListener('change', updateOrientation);
+
+//   //   return () => {
+//   //     Dimensions.removeEventListener('change', updateOrientation);
+//   //   };
+//   // }, []);
+
+
+
+//   /* i am using  VideoRenderMode but this is not working for remove black space 
+  
+//     i am also try like resizeMode and aspectRatio 
+
+//     aspectRatio output is video call screen view half of video and half of black spce 
+  
+  
+//   */ 
+
+// //   const styleProps = {
+// //     // UIKitContainer:{margin:20},
+// //     // videoMode:
+// //     //   {
+// //     //   max:"contain", // Set your desired RenderModeType for max
+// //     //   min: "cover", // Set your desired RenderModeType for min
+// //     //   },
+// //     //   gridVideoView:{height: '100%',width:"100%",backgroundColor: '#245',borderColor:"blue",borderWidth:10},
+// //     // maxViewStyles: {
+// //     //   height: "100%",
+// //     //   width: "100%",
+// //     //   alignSelf: "center",
+// //     // },
+// //     overlayContainer: {
+// //         backgroundColor: '#2edb8533',
+// //         opacity: 1,
+// //       },
+// //     minViewContainer: {
+// //         bottom: 80,
+// //         top: undefined,
+// //         backgroundColor: '#fff',
+// //         borderColor: '#2edb85',
+// //         borderWidth: 4,
+// //         height: '26%',
+// //       },
+// //       minViewStyles: {
+// //         height: '100%',
+// //         width : '50%'
+// //       },
+// //       maxViewStyles: {
+// //         height: 400,
+// //         width : 50
+// //       },
+// //       UIKitContainer: {height: '94%'},
+// //   };
+
+
+
+//  /* i am using  RenderModeType but this is not working for remove black space 
+ 
+//   a.RenderModeFit
+//   b.RenderModeHidden
+ 
+ 
+//  */ 
+
+//   //  const styleProps={
+//   //   usernameText: { padding: 10, right: 0 },
+//   //   localBtnContainer: { display: buttonsState },
+//   //   // iconSize: 30,
+//   //   // theme: '#ffffffee',
+//   //   videoMode: {
+//   //     max: RenderModeType?.RenderModeFit,
+//   //     min: RenderModeType?.RenderModeHidden,
+//   //   },
+//   //   // overlayContainer: {
+//   //   //   backgroundColor: '#2edb8533',
+//   //   //   opacity: 1,
+//   //   // },
+//   //   // localBtnStyles: {
+//   //   //   muteLocalVideo: btnStyle,
+//   //   //   muteLocalAudio: btnStyle,
+//   //   //   switchCamera: btnStyle,
+//   //   //   endCall: {
+//   //   //     borderRadius: 0,
+//   //   //     width: 50,
+//   //   //     height: 50,
+//   //   //     backgroundColor: '#f66',
+//   //   //     borderWidth: 0,
+//   //   //   },
+//   //   // },
+//   //   // localBtnContainer: {
+//   //   //   backgroundColor: '#fff',
+//   //   //   bottom: 0,
+//   //   //   paddingVertical: 10,
+//   //   //   borderWidth: 4,
+//   //   //   borderColor: '#2edb85',
+//   //   //   height: 80,
+//   //   // },
+//   //   // maxViewRemoteBtnContainer: {
+//   //   //   top: 0,
+//   //   //   alignSelf: 'flex-end',
+//   //   // },
+//   //   // remoteBtnStyles: {
+//   //   //   muteRemoteAudio: remoteBtnStyle,
+//   //   //   muteRemoteVideo: remoteBtnStyle,
+//   //   //   remoteSwap: remoteBtnStyle,
+//   //   //   minCloseBtnStyles: remoteBtnStyle,
+//   //   // },
+//   //   // minViewContainer: {
+//   //   //   bottom: 80,
+//   //   //   top: undefined,
+//   //   //   backgroundColor: '#fff',
+//   //   //   borderColor: '#2edb85',
+//   //   //   borderWidth: 4,
+//   //   //   height: '26%',
+//   //   // },
+//   //   minViewStyles: {
+//   //     height: '100%',
+//   //     // width:"110%"
+//   //     resizeMode:"cover"
+//   //   },
+//   //   maxViewStyles: {
+//   //     height: '100%',
+//   //     // width:"110%"
+//   //     resizeMode:"cover"
+//   //   },
+//   //   // UIKitContainer: {height: '100%',width:"100%"},
+//   // };
+//   // const styles = getStyles(orientation, numParticipants);
+
+
+
+//   /*  another css use to remove black space  part 1 */
+
+//   // const getVideoStyles = () => {
+//   //   if (userCount == 1) {
+//   //     return {
+//   //       width,
+//   //       height,
+//   //     };
+//   //   } else if (userCount == 2) {
+//   //     return {
+//   //       width,
+//   //       height: height / 2,
+//   //     };
+//   //   } else {
+//   //     // For more than 2 participants, adjust as needed
+//   //     return {
+//   //       width: width / 2,
+//   //       height: height / 2,
+//   //     };
+//   //   }
+//   // };
+
+  
+
+//   const styleProps = {
+//     usernameText: { padding: 10, right: 0 },
+//     localBtnContainer: { display: buttonsState },
+//     // videoMode: {
+//     //   max: RenderModeType.Fit,
+//     //   min: RenderModeType.Hidden, 
+//     // },
+//     // minViewStyles: styles.gridView,
+//     // maxViewStyles: userCount==1?styles.fullView:styles.fullView1,
+//     // minViewContainer: styles.fullScreen,
+//     // minViewStyles: styles.gridView,
+//     AgoraVideoView: {
+//       localVideo: {
+//         container: {
+//           flex: 1,
+//         },
+//         video: {
+//           width: '50%', // Adjust width to a smaller percentage
+//           height: '100%',
+//         },
+//       },
+//       remoteVideo: {
+//         container: {
+//           flex: 1,
+//         },
+//         video: {
+//           width: '100%', // Set width to 100% to fill remaining space
+//           height: '100%',
+//         },
+//       },
+//     },
+//     // videoMode: layout?.grid,
+
+//   //////////////* another css use to remove black space  part 2 */////////////////
+
+//     // AgoraVideoView: {
+//     //   localVideo: {
+//     //     container:getVideoStyles(),
+//     //     video: {
+//     //       width: '100%',
+//     //       height: '100%',
+//     //     },
+//     //   },
+//     //   remoteVideo: {
+//     //     container:getVideoStyles(),
+//     //     video: {
+//     //       width: '100%',
+//     //       height: '100%',
+//     //     },
+//     //   },
+//     // },
+//   };
+  
+
+// //   const VideoCanvas = {
+// //     renderMode: RenderModeType.RenderModeHidden,
+// //   };
+
+//   const props = {
+//     connectionData: {
+//       appId: "a233f454a3f64ce19d6b480aaa018a93",
+//       channel: "agoratest",
+//       layout: 0,
+//       displayUsername: true,
+//       username : "vikash",
+//       role:1,
+
+//    // videoRenderMode: VideoRenderMode?.Hidden,
+//     },
+//     rtcCallbacks: {
+//       EndCall: () =>{ setVideoCall(false);  setRemoteUsers([]);},
+     
+//       UserJoined: (uid, elapsed) => { 
+//         setRemoteUsers(prevUsers => [...prevUsers, { uid, role:2 }]);   
+//         setUserCount(prevCount => prevCount + 1)
+//     },
+//       UserOffline: (uid, reason) => {  setRemoteUsers(prevUsers => prevUsers.filter(user => user.uid !== uid)); 
+//         setUserCount(prevCount => prevCount - 1)
+//     },
+//     },
+//   };
+
+//   const filteredRemoteUsers = isHost
+//   ? remoteUsers.filter(user => user.role !== 2).map(user => user.uid)
+//   : remoteUsers.map(user => user.uid);
+
+//   return videoCall ? (
+//     <SafeAreaView style={styles.max}>
+//        {/* <View style={styles.fullScreen1}> */}
+      
+//       <AgoraUIKit
+//         connectionData={props.connectionData}
+//         rtcCallbacks={props.rtcCallbacks}
+//         styleProps={styleProps}
+//         videoPlaceholderProps={{ showButtons: false }}
+//         remoteUsers={filteredRemoteUsers}
+//       />
+//        <Text style={styles.userCountText}>Connected Users: {userCount}</Text>
+//        {/* </View> */}
+//       </SafeAreaView >
+
+//   ) : (<>
+//     <Text style={styles.startCallText} onPress={() => {setVideoCall(true); setUserCount(1)}}>
+//       Start Call
+//     </Text>
+
+// <Text style={styles.LiveStreamText} onPress={() => navigation.navigate("Livestream") } > Live Stream</Text></>
+//   );
+// };
+
+// // const styles = StyleSheet.create({
+// //   container: {
+// //     flex: 1,
+// //     backgroundColor: '#000',
+// //   },
+// //   fullScreen: {
+// //     position: 'absolute',
+// //     width: 384,
+// //     height: 784,
+// //     top: 10,
+// //     right: 10,
+// //     zIndex: 1,
+// //   },
+// //   fullScreen1: {
+// //     width: width,
+// //     height: height,
+// //   },
+// //   startCallText: {
+// //     marginTop: "10%",
+// //     textAlign: 'center',
+// //   },
+// // });
+
+
+
+// // const getStyles = (orientation, numParticipants) => {
+// //   const { height, width } = Dimensions.get('window');
+// //   const isLandscape = orientation === 'landscape';
+
+// //   const numColumns = isLandscape ? Math.ceil(Math.sqrt(numParticipants)) : 2;
+// //   const numRows = Math.ceil(numParticipants / numColumns);
+// //   // const videoWidth = width / numColumns;
+// //   // const videoHeight = height / numRows;
+
+// //   return StyleSheet.create({
+// //     container: {
+// //       flex: 1,
+// //       backgroundColor: '#000',
+// //     },
+// //     fullScreen: {
+// //       // width: width,
+// //       // height: height,
+// //       flex: 1,
+// //       flexDirection: 'row',
+// //       flexWrap: 'wrap',
+// //       justifyContent: 'center',
+// //       alignItems: 'center',
+// //     },
+// //     gridView: {
+// //       width: width / numColumns,
+// //       height: height / numRows,
+// //       justifyContent: 'center',
+// //       alignItems: 'center',
+// //       // margin: 0, // Remove margins to avoid black space
+// //       // borderWidth: 1, // Optional: Add border to see individual video boundaries
+// //       borderColor: '#e24', // Optional: Border color
+// //     },
+// //     userCountText: {
+// //       position: 'absolute',
+// //       top: 10,
+// //       left: 10,
+// //       color: 'white',
+// //       fontSize: 16,
+// //     },
+// //     startCallText: {
+// //           marginTop: "10%",
+// //           textAlign: 'center',
+// //         },
+// //   });
+// // };
+
+
+// const styles =  StyleSheet.create({
+//   max: {
+//     flex: 1,
+//     // justifyContent: 'center',
+//     // alignItems: 'center',
+//     // backgroundColor: '#fff',
+//   },
+  
+//   fullView: {
+//     width: width,
+//     height: height ,
+//   },
+//   fullView1: {
+//     width: width,
+//     height: height,
+//   },
+//   userCountText: {
+//     position: 'absolute',
+//     top: 10,
+//     left: 10,
+//     color: 'white',
+//     fontSize: 16,
+//   },
+//   startCallText: {
+//             marginTop: "10%",
+//             textAlign: 'center',
+//           },
+//   LiveStreamText: {
+//             marginTop: "10%",
+//             textAlign: 'center',
+//           },
+  
+// });
+
+
+
+
+
+
+// export default Videocall;
+
+
+ // "bundleIdentifier": "com.vikashhyperbeans.testagoracall"
+
+
+
+//   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
+// "@react-native-firebase/app": "^19.1.2",
+//     "@react-native-firebase/messaging": "^19.1.2",
+
+
+
+// import React, { useState, useEffect } from 'react';
+// import { Button, Text, TextInput, View } from 'react-native';
+// import AgoraUIKit from 'agora-rn-uikit';
+
+// const App = () => {
+//   const [joined, setJoined] = useState(false);
+//   const [channelName, setChannelName] = useState('');
+//   const [client, setClient] = useState(null);
+//   const [error, setError] = useState(null); // Add state for error handling
+
+//   // Improved error handling and logging
+//   const handleError = (error) => {
+//     console.error('Agora client initialization error:', error);
+//     setError(error.message || 'An error occurred initializing Agora client.'); // Provide user-friendly error message
+//   };
+
+//   useEffect(() => {
+//     // Initialize Agora client with proper error handling
+//     const initClient = async () => {
+//       try {
+//         const agoraClient = new AgoraRTC.Client({ appId: 'a233f454a3f64ce19d6b480aaa018a93' }); // Replace with your actual App ID
+//         console.log('Agora client initialized:', agoraClient);
+//         setClient(agoraClient);
+//       } catch (error) {
+//         handleError(error);
+//       }
+//     };
+
+//     initClient();
+//   }, []);
+
+//   const joinChannel = async () => {
+//     if (!client) {
+//       console.warn('Client not initialized yet. Cannot join channel.');
+//       return;
+//     }
+
+//     try {
+//       const uid = Math.floor(Math.random() * 100000000); // Generate a random user ID
+//       await client.join(channelName, null, uid, successCallback, errorCallback);
+//       setJoined(true);
+//     } catch (error) {
+//       console.error('Error joining channel:', error);
+//       setError(error.message || 'An error occurred joining the channel.'); // Provide user-friendly error message
+//     }
+//   };
+
+//   const leaveChannel = async () => {
+//     if (!client || !joined) {
+//       console.warn('Client not initialized or not joined to a channel. Cannot leave.');
+//       return;
+//     }
+
+//     try {
+//       await client.leave(successCallback, errorCallback);
+//       setJoined(false);
+//     } catch (error) {
+//       console.error('Error leaving channel:', error);
+//       setError(error.message || 'An error occurred leaving the channel.'); // Provide user-friendly error message
+//     }
+//   };
+
+//   return (
+//     <View>
+//       {/* {error && <Text style={{ color: 'red' }}>{error}</Text>} Display error message if present */}
+//       <Text>Channel Name:</Text>
+//       <TextInput onChangeText={text => setChannelName(text)} />
+//       <Button title={joined ? 'Leave Channel' : 'Join Channel'} onPress={joined ? leaveChannel : joinChannel} />
+//       <AgoraUIKit ref={component => setUIKit(component)} />
+//     </View>
+//   );
+// };
+
+// export default App;
+
+// import React, { useEffect, useState } from "react";
+// import AgoraUIKit from "agora-rn-uikit";
+// import { Text, PermissionsAndroid, Alert } from "react-native";
+
+// const App = () => {
+//   const [videoCall, setVideoCall] = useState(false);
+//   const [callId, setCallId] = useState(null);
+
+//   const generateCallId = () => {
+//     return Date.now().toString();
+//   };
+
+//   const props = {
+//     connectionData: {
+//       appId: "a233f454a3f64ce19d6b480aaa018a93",
+//       channel: callId || generateCallId(),
+//       layout: 2, // Two-way video call layout
+//     },
+//     rtcCallbacks: {
+//       EndCall: () => setVideoCall(false),
+//     },
+//   };
+
+//   useEffect(() => {
+//     const requestPermissions = async () => {
+//       const granted = await PermissionsAndroid.requestMultiple([
+//         PermissionsAndroid.PERMISSIONS.CAMERA,
+//         PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
+//       ]);
+//       if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
+//         Alert.alert(
+//           "Permissions Required",
+//           "Camera and microphone permissions are required for video calls."
+//         );
+//       }
+//     };
+
+//     if (Platform.OS === "android") {
+//       requestPermissions();
+//     }
+//   }, []);
+
+//   const initiateCall = async () => {
+//     const newCallId = generateCallId();
+//     setCallId(newCallId);
+
+//     try {
+//       // Send call ID to your server for verification (optional)
+//       const response = await fetch('http://192.168.2.168:3000/call', {
+//         method: 'POST',
+//         headers: { 'Content-Type': 'application/json' },
+//         body: JSON.stringify({ callId: newCallId }),
+//       });
+
+//       if (!response.ok) {
+//         throw new Error('Server call failed');
+//       }
+
+//       const data = await response.json();
+//       if (data.success) {
+//         // Optional: Process server response (e.g., token)
+//         setVideoCall(true);
+//       } else {
+//         Alert.alert('Error', data.message || 'Call initiation failed');
+//       }
+//     } catch (error) {
+//       console.error('Error initiating call:', error);
+//       Alert.alert('Error', 'Failed to initiate call');
+//     }
+//   };
+
+//   return (
+//     <>
+//       {videoCall ? (
+//         <AgoraUIKit
+//           connectionData={props.connectionData}
+//           rtcCallbacks={props.rtcCallbacks}
+//         />
+//       ) : (
+//         <Text style={{ marginTop: "10%" }} onPress={() => initiateCall()}>
+//           Start Call
+//         </Text>
+//       )}
+//     </>
+//   );
+// };
+
+// export default App;
+
+// import React, { Fragment } from 'react';
+// import PushController from './PushController';
+// import {
+//   SafeAreaView,
+//   StyleSheet,
+//   ScrollView,
+//   View,
+//   Text,
+//   StatusBar,
+//   FlatList,
+// } from 'react-native';
+// import {
+//   Header,
+//   Colors,
+// } from 'react-native/Libraries/NewAppScreen';
+
+// // Dummy data for list, we'll replace this with data received from push
+// let pushData = [
+//   {
+//     title: "First push",
+//     message: "First push message"
+//   },
+//   {
+//     title: "Second push",
+//     message: "Second push message"
+//   }
+// ];
+
+// const renderItem = ({ item }) => (
+//   <View key={item.title}>
+//     <Text style={styles.title}>{item.title}</Text>
+//     <Text style={styles.message}>{item.message}</Text>
+//   </View>
+// );
+
+// const App = () => {
+//   return (
+//     <Fragment>
+//       <StatusBar barStyle="dark-content" />
+//       <SafeAreaView>
+//         <ScrollView
+//           contentInsetAdjustmentBehavior="automatic"
+//           style={styles.scrollView}>
+//           <Header />
+//           <View style={styles.listHeader}>
+//             <Text>Push Notifications</Text>
+//           </View>
+//           <View style={styles.body}>
+//             <FlatList
+//               data={pushData}
+//               renderItem={renderItem}
+//               keyExtractor={item => item.title}
+//             />
+//           </View>
+//         </ScrollView>
+//       </SafeAreaView>
+//       <PushController />
+//     </Fragment>
+//   );
+// };
+
+// const styles = StyleSheet.create({
+//   scrollView: {
+//     backgroundColor: Colors.lighter,
+//   },
+//   listHeader: {
+//     backgroundColor: '#eee',
+//     color: "#222",
+//     height: 44,
+//     padding: 12
+//   },
+//   title: {
+//     fontSize: 18,
+//     fontWeight: 'bold',
+//     paddingTop: 10
+//   },
+//   message: {
+//     fontSize: 14,
+//     paddingBottom: 15,
+//     borderBottomColor: "#ccc",
+//     borderBottomWidth: 1
+//   },
+//   engine: {
+//     position: 'absolute',
+//     right: 0,
+//   },
+//   body: {
+//     backgroundColor: Colors.white,
+//     paddingHorizontal: 20,
+//     paddingVertical: 10,
+//   },
+// });
+
+// export default App;
+
+// import React, {useRef, useState, useEffect} from 'react';
+// import {
+//     SafeAreaView,
+//     ScrollView,
+//     StyleSheet,
+//     Text,
+//     View,
+//     Switch,
+//     Alert,
+// } from 'react-native';
+// import {PermissionsAndroid, Platform} from 'react-native';
+// import {
+//     ClientRoleType,
+//     createAgoraRtcEngine,
+//     IRtcEngine,
+//     RtcSurfaceView,
+//     ChannelProfileType,
+// } from 'react-native-agora';
+
+// const appId = '60e75ef99a7a4d1cb5f2580ec2bf56bc';
+// const channelName = 'channeltest';
+// const token = '007eJxTYNA87vdwH2unCcfBWfVR4ks3Zr2TONLzpWPZBSe9hxL33sYpMJgZpJqbpqZZWiaaJ5qkGCYnmaYZmVoYpCYbJaWZmiUlJy4QTmsIZGTQ9fnIyMgAgSA';
+// const uid = 0;
+
+// const App = () => {
+//     const agoraEngineRef = useRef(); // Agora engine instance
+//     const [isJoined, setIsJoined] = useState(false); // Indicates if the local user has joined the channel
+//     const [isHost, setIsHost] = useState(true); // Client role
+//     const [remoteUid, setRemoteUid] = useState(0); // Uid of the remote user
+//     const [message, setMessage] = useState(''); // Message to the user
+
+//     const getPermission = async () => {
+//       if (Platform.OS === 'android') {
+//           await PermissionsAndroid.requestMultiple([
+//               PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
+//               PermissionsAndroid.PERMISSIONS.CAMERA,
+//           ]);
+//       }
+//   };
+
+//     function showMessage(msg) {
+//         setMessage(msg);
+//     }
+
+//     useEffect(() => {
+//       // Initialize Agora engine when the app starts
+//       setupVideoSDKEngine();
+//    });
+
+//    const setupVideoSDKEngine = async () => {
+//       try {
+//       // use the helper function to get permissions
+//       if (Platform.OS === 'android') { await getPermission()};
+//       agoraEngineRef.current = createAgoraRtcEngine();
+//       const agoraEngine = agoraEngineRef.current;
+//       agoraEngine.registerEventHandler({
+//           onJoinChannelSuccess: () => {
+//               showMessage('Successfully joined the channel ' + channelName);
+//               setIsJoined(true);
+//           },
+//           onUserJoined: (_connection, Uid) => {
+//               showMessage('Remote user joined with uid ' + Uid);
+//               setRemoteUid(Uid);
+//           },
+//           onUserOffline: (_connection, Uid) => {
+//               showMessage('Remote user left the channel. uid: ' + Uid);
+//               setRemoteUid(0);
+//           },
+//       });
+//       agoraEngine.initialize({
+//           appId: appId,
+//           channelProfile: ChannelProfileType.ChannelProfileLiveBroadcasting,
+//       });
+//       agoraEngine.enableVideo();
+//       } catch (e) {
+//           console.log(e);
+//       }
+//    };
+
+//    const join = async () => {
+//     if (isJoined) {
+//         return;
+//     }
+//     try {
+//         agoraEngineRef.current?.setChannelProfile(
+//             ChannelProfileType.ChannelProfileLiveBroadcasting,
+//         );
+//         if (isHost) {
+//             agoraEngineRef.current?.startPreview();
+//             agoraEngineRef.current?.joinChannel(token, channelName, uid, {
+//                 clientRoleType: ClientRoleType.ClientRoleBroadcaster});
+//         } else {
+//             agoraEngineRef.current?.joinChannel(token, channelName, uid, {
+//                 clientRoleType: ClientRoleType.ClientRoleAudience});
+//         }
+//     } catch (e) {
+//         console.log(e);
+//     }
+// };
+
+// const leave = () => {
+//   try {
+//       agoraEngineRef.current?.leaveChannel();
+//       setRemoteUid(0);
+//       setIsJoined(false);
+//       showMessage('You left the channel');
+//   } catch (e) {
+//       console.log(e);
+//   }
+// };
+
+//     return (
+//       <SafeAreaView style={styles.main}>
+//           <Text style={styles.head}>
+//               Agora Interactive Live Streaming Quickstart
+//           </Text>
+//           <View style={styles.btnContainer}>
+//               <Text onPress={join} style={styles.button}>
+//                   Join
+//               </Text>
+//               <Text onPress={leave} style={styles.button}>
+//                   Leave
+//               </Text>
+//           </View>
+//           <View style={styles.btnContainer}>
+//               <Text>Audience</Text>
+//               <Switch
+//                   onValueChange={switchValue => {
+//                       setIsHost(switchValue);
+//                       if (isJoined) {
+//                       leave();
+//                       }
+//                   }}
+//                   value={isHost}
+//               />
+//               <Text>Host</Text>
+//           </View>
+//         <ScrollView
+//               style={styles.scroll}
+//               contentContainerStyle={styles.scrollContainer}>
+//               {isJoined && isHost ? (
+//               <React.Fragment key={0}>
+//                   <RtcSurfaceView canvas={{uid: 0}} style={styles.videoView} />
+//                   <Text>Local user uid: {uid}</Text>
+//               </React.Fragment>
+//               ) : (
+//                   <Text>{isHost ? 'Join a channel' : ''}</Text>
+//               )}
+//               {isJoined && !isHost && remoteUid !== 0 ? (
+//                   <React.Fragment key={remoteUid}>
+//                       <RtcSurfaceView
+//                           canvas={{uid: remoteUid}} style={styles.videoView} />
+//                       <Text>Remote user uid: {remoteUid}</Text>
+//                   </React.Fragment>
+//               ) : (
+//                   <Text>{isJoined && !isHost ? 'Waiting for a remote user to join' : ''}</Text>
+//               )}
+//               <Text style={styles.info}>{message}</Text>
+//           </ScrollView>
+//       </SafeAreaView>
+//   );
+
+// };
+
+// const styles = StyleSheet.create({
+//     button: {
+//         paddingHorizontal: 25,
+//         paddingVertical: 4,
+//         fontWeight: 'bold',
+//         color: '#ffffff',
+//         backgroundColor: '#0055cc',
+//         margin: 5,
+//     },
+//     main: {flex: 1, alignItems: 'center'},
+//     scroll: {flex: 1, backgroundColor: '#ddeeff', width: '100%'},
+//     scrollContainer: {alignItems: 'center'},
+//     videoView: {width: '90%', height: 200},
+//     btnContainer: {flexDirection: 'row', justifyContent: 'center'},
+//     head: {fontSize: 20},
+//     info: {backgroundColor: '#ffffe0', paddingHorizontal: 8, color: '#0000ff'}
+// });
+
+// export default App;
+
+// import React, { useState } from 'react';
+// import AgoraUIKit from 'agora-rn-uikit';
+// import { Button, View, Text, ActivityIndicator, TextInput } from 'react-native';
+
+// const App = () => {
+//   const [appId, setAppId] = useState('60e75ef99a7a4d1cb5f2580ec2bf56bc'); // Replace with your Agora App ID
+//   const [channel, setChannel] = useState('agoracall'); // Channel name for the call
+//   const [inCall, setInCall] = useState(false);
+//   const [loading, setLoading] = useState(false); // State for loading indicator
+
+//   const startCall = async () => {
+//     setLoading(true); // Show loading indicator
+//     try {
+//       // Call Agora UIKit method to start the call (replace with the appropriate method)
+//       await AgoraUIKit.joinChannel(props.connectionData);
+//       setInCall(true);
+//     } catch (error) {
+//       console.error('Error starting call:', error);
+//       // Handle errors appropriately (e.g., display an error message to the user)
+//     } finally {
+//       setLoading(false); // Hide loading indicator
+//     }
+//   };
+
+//   const endCall = async () => {
+//     setInCall(false);
+//     // Call Agora UIKit method to end the call (replace with the appropriate method)
+//     await AgoraUIKit.leaveChannel();
+//   };
+
+//   const props = {
+//     connectionData: {
+//       appId,
+//       channel,
+//       layout: 2,
+//     },
+//     rtcCallbacks: {
+//       EndCall: endCall,
+//     },
+//   };
+
+//   return (
+//     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+//       {!inCall ? (
+//         <>
+//           <Text>Enter Channel Name:</Text>
+//           <TextInput value={channel} onChangeText={setChannel} placeholder="Channel Name" />
+//           <Button title="Start Call" onPress={startCall} disabled={loading} />
+//           {loading && <ActivityIndicator />}
+//         </>
+//       ) : (
+//         <AgoraUIKit connectionData={props.connectionData} rtcCallbacks={props.rtcCallbacks} />
+//       )}
+//     </View>
+//   );
+// };
+
+// export default App;
+
+// import React, { useEffect, useState } from 'react';
+// import { Alert, Button, View } from 'react-native';
+// import AgoraUIKit from 'agora-rn-uikit';
+
+// const App = () => {
+//   const [remoteUserIds, setRemoteUserIds] = useState([]);
+//   // const [isIncomingCall, setIsIncomingCall] = useState(false);
+//   // const [callingUserId, setCallingUserId] = useState(null);
+
+//   // useEffect(() => {
+//   //   // Initialize Agora SDK
+//   //   AgoraUIKit.init('60e75ef99a7a4d1cb5f2580ec2bf56bc');
+
+//   //   // Listen for incoming signaling messages (e.g., call invitations)
+//   //   // AgoraUIKit.on('incomingCall', (userId) => {
+//   //   //   setIsIncomingCall(true);
+//   //   //   setCallingUserId(userId);
+//   //   // });
+
+//   //   // return () => {
+//   //   //   // Clean up event listeners
+//   //   //   AgoraUIKit.off('incomingCall');
+//   //   // };
+//   // }, []);
+
+//   // const handleCall = async (userIds) => {
+//   //   try {
+//   //     // Initialize Agora SDK
+//   //     await AgoraUIKit.init('YOUR_AGORA_APP_ID');
+
+//   //     // Join the channel for video call
+//   //     await AgoraUIKit.joinChannel('CHANNEL_ID', 'TOKEN', null, 'LOCAL_USER_ID');
+
+//   //     // Add remote users to the call
+//   //     await Promise.all(userIds.map(userId => AgoraUIKit.addRemoteUser(userId)));
+
+//   //     setRemoteUserIds(userIds);
+//   //   } catch (error) {
+//   //     console.error('Error initiating call:', error);
+//   //   }
+//   // };
+
+//   const handleCall = async (userIds) => {
+//     try {
+
+//       await AgoraUIKit.init('60e75ef99a7a4d1cb5f2580ec2bf56bc');
+
+//       // Join the channel for video call
+//       await AgoraUIKit.joinChannel('agoracall', '007eJxTYGivujppJb/dpxmr9pkcWGPYz3LTbOLWqQ5W65UW3J/9KnW/AoOZQaq5aWqapWWieaJJimFykmmakamFQWqyUVKaqVlSsmk/X1pDICODz8K9zIwMEAjiczIkpucXJSYn5uQwMAAAdKgi5Q==', null, 1);
+
+//       // Add remote users to the call
+//       await Promise.all(userIds.map(userId => AgoraUIKit.addRemoteUser(userId)));
+
+//       setRemoteUserIds(userIds);
+//     } catch (error) {
+//       console.error('Error initiating call:', error);
+//     }
+//   };
+
+//   // const handleAcceptCall = async () => {
+//   //   try {
+//   //     // Join the channel to accept the incoming call
+//   //     await AgoraUIKit.joinChannel('agoracall', '007eJxTYGivujppJb/dpxmr9pkcWGPYz3LTbOLWqQ5W65UW3J/9KnW/AoOZQaq5aWqapWWieaJJimFykmmakamFQWqyUVKaqVlSsmk/X1pDICODz8K9zIwMEAjiczIkpucXJSYn5uQwMAAAdKgi5Q==', null, 1);
+
+//   //     // Add the calling user to the call
+//   //     await AgoraUIKit.addRemoteUser(callingUserId);
+
+//   //     setIsIncomingCall(false);
+//   //     setRemoteUserIds([callingUserId]);
+//   //   } catch (error) {
+//   //     console.error('Error accepting call:', error);
+//   //   }
+//   // };
+
+//   // const handleRejectCall = () => {
+//   //   setIsIncomingCall(false);
+//   //   setCallingUserId(null);
+//   //   // Notify the caller that the call was rejected
+//   //   // Send signaling message to the caller
+//   // };
+
+//   return (
+//     <View>
+//       {/* Button to initiate a call */}
+//       <Button title="Call User 1, 2, 3" onPress={() => handleCall([ 2, 3, 4])} />
+
+//       {/* Handle incoming call */}
+//       {/* {isIncomingCall && (
+//         <View>
+//           <Text>{`Incoming call from user ${callingUserId}`}</Text>
+//           <Button title="Accept" onPress={handleAcceptCall} />
+//           <Button title="Reject" onPress={handleRejectCall} />
+//         </View>
+//       )} */}
+
+//       {/* Video call UI components */}
+//       <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+//         {remoteUserIds.map((userId) => (
+//           <AgoraUIKit.AgoraVideoView
+//             key={userId}
+//             style={{ width: '33%', aspectRatio: 1 }}
+//             remoteUid={userId}
+//             mode={1}
+//             local={{ uid: '1', channelId: 'agoracall' }}
+//           />
+//         ))}
+//       </View>
+//     </View>
+//   );
+// };
+
+// export default App;

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "683736150745",
+    "project_id": "fcmtest-da727",
+    "storage_bucket": "fcmtest-da727.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:683736150745:android:6a9867c2945c4014c0c4c8",
+        "android_client_info": {
+          "package_name": "com.vikashhyperbeans.testagoracall"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDw_vsevyS0AZxbCoI3wACgMXxP_d1L-QQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

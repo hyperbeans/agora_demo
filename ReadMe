@@ -1,0 +1,56 @@
+// command  
+// ================
+
+
+
+// npm i 
+// npm i  --g eas-cli 
+// eas login  
+// npx expo start  
+
+// for behave like build 
+// npx expo run:android --variant release
+
+
+// real build 
+// eas build -p android --profile development
+
+
+
+
+
+
+
+
+
+// version use
+// ========================
+
+
+//     "agora-react-native-rtm": "^1.5.1",
+//     "agora-rn-uikit": "^5.0.1",
+//     "expo": "~50.0.14",
+//     "expo-dev-client": "~3.3.11",
+//     "react": "18.2.0",
+//     "react-native": "0.73.6",
+//     "react-native-agora": "^4.1.2",
+
+
+
+//  link use 
+//  ========================
+
+
+//  1. https://github1s.com/AgoraIO-Extensions/react-native-agora/blob/f2859c99255b7adabe06591ee345b6cfd7f06057/src/AgoraRtcRenderView.tsx
+
+//  2.https://api-ref.agora.io/en/video-sdk/react-native/4.x/API/enum_rendermodetype.html
+
+//  3.https://github.com/AgoraIO-Community/VideoUIKit-ReactNative/blob/master/src/Contexts/PropsContext.tsx
+
+//  4.https://github.com/AgoraIO-Community/VideoUIKit-ReactNative/blob/master/src/Contexts/PropsContext.tsx#L104
+
+//  5. https://www.youtube.com/watch?v=kd0YGr1iHjs    "video for video call "
+
+//  6. https://api-ref.agora.io/en/video-sdk/react-native/4.x/API/class_rtcsurfaceview.html
+
+//  7. https://github.com/AgoraIO-Community/VideoUIKit-ReactNative/wiki/Examples#full-example
